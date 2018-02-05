@@ -29,6 +29,18 @@ const withOneWeek = () => [
     },
 ];
 
+const withTwoDays = () => [
+    {
+        value: 1,
+        date: '2011-01-06T00:00:00Z',
+    },
+    {
+        value: 2,
+        date: '2011-01-07T00:00:00Z',
+    },
+];
+
 export default {
     withOneWeek,
+    withTwoDays,
 };

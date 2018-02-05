@@ -1,0 +1,163 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import brush from './brushChart';
+import {loadingContainerWrapper} from '../loading/LoadingContainer';
+
+export default class Brush extends Component {
+    static propTypes = {
+        /**
+         * Internally used, do not overwrite.
+         */
+        data: PropTypes.arrayOf(PropTypes.any),
+
+        /**
+         * Exposes the constants to be used to force the x axis to respect a
+         * certain granularity current options: MINUTE_HOUR, HOUR_DAY, DAY_MONTH, MONTH_YEAR
+         */
+        axisTimeCombinations: PropTypes.number,
+
+        /**
+         * Gets or Sets the dateRange for the selected part of the brush
+         */
+        dateRange: PropTypes.arrayOf(PropTypes.string),
+        
+        /**
+         * Gets or Sets the gradient of the chart
+         */
+        gradient: PropTypes.arrayOf(PropTypes.string),
+
+        /**
+         * Gets or Sets the height of the chart
+         */
+        height: PropTypes.number,
+        /**
+         * Gets or Sets the isAnimated property of the chart, making it to animate
+         * when render. By default this is 'false'
+         */
+        
+        /**
+         * Gets or Sets the loading state of the chart
+         */
+        loadingState: PropTypes.string,
+        /**
+         * Pass language tag for the tooltip to localize the date. Feature
+         * uses Intl.DateTimeFormat, for compatability and support, refer
+         * to https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat
+         */
+        locale: PropTypes.string,
+        /**
+         * Gets or Sets the margin of the chart
+         */
+        margin: PropTypes.shape({
+            top: PropTypes.number,
+            bottom: PropTypes.number,
+            left: PropTypes.number,
+            right: PropTypes.number,
+        }),
+
+        /**
+         * Gets or Sets whether a loading state will be shown
+         */
+        shouldShowLoadingState: PropTypes.bool,
+        /**
+         * Gets or Sets the width of the chart
+         */
+        width: PropTypes.number,
+        /**
+         * Exposes the ability to force the chart to show a certain x format
+         * It requires a `xAxisFormat` of 'custom' in order to work.
+         * NOTE: localization not supported
+         */
+        xAxisCustomFormat: PropTypes.string,
+        /**
+         * Exposes the ability to force the chart to show a certain x axis grouping
+         */
+        xAxisFormat: PropTypes.string,
+        /**
+         * Exposes the ability to force the chart to show a certain x ticks. It
+         * requires a `xAxisFormat` of 'custom' in order to work. NOTE: This
+         * value needs to be a multiple of 2, 5 or 10. They won't always work
+         * as expected, as D3 decides at the end how many and where the ticks will appear.
+         */
+        xTicks: PropTypes.number,
+
+        customMouseOver: PropTypes.func,
+        customMouseMove: PropTypes.func,
+        customMouseOut: PropTypes.func,
+
+        /**
+         * Internally used, do not overwrite.
+         *
+         * @ignore
+         */
+        chart: PropTypes.object,
+    }
+
+    static defaultProps = {
+        chart: brush,
+        shouldShowLoadingState: false,
+    }
+
+    componentDidMount() {
+        if (!this.props.shouldShowLoadingState) {
+            this._createChart();
+        }
+    }
+
+    componentDidUpdate() {
+        if (!this.props.shouldShowLoadingState) {
+            if (!this._chart) {
+                this._createChart();
+            } else {
+                this._updateChart();
+            } 
+        }
+    }
+
+    componentWillUnmount() {
+        this.props.chart.destroy(this._rootNode);
+    }
+
+    _createChart() {
+        this._chart = this.props.chart.create(
+            this._rootNode,
+            this.props.data,
+            this._getChartConfiguration()
+        );
+    }
+
+    _updateChart() {
+        this.props.chart.update(
+            this._rootNode,
+            this.props.data,
+            this._getChartConfiguration(),
+            this._chart
+        );
+    }
+
+    /**
+     * We want to remove the chart and data from the props in order to have a configuration object
+     * @return {Object} Configuration object for the chart
+     */
+    _getChartConfiguration() {
+        let configuration = {...this.props};
+
+        delete configuration.data;
+        delete configuration.chart;
+        delete configuration.shouldShowLoadingState;
+
+        return configuration;
+    }
+
+    _setRef(componentNode) {
+        this._rootNode = componentNode;
+    }
+
+    render() {
+        return loadingContainerWrapper(
+            this.props,
+            this.props.loadingState || this.props.chart.loading(),
+            <div className="brush-container" ref={this._setRef.bind(this)} />
+        );
+    }
+}
