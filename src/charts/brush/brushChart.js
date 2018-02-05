@@ -3,7 +3,7 @@ import {select} from 'd3-selection';
 import {validateConfiguration, validateContainer, validateData} from '../helpers/validation';
 import {applyConfiguration} from '../helpers/configuration';
 
-import { brush as brushLoadingState } from 'britecharts/dist/umd/loading.min';
+import { line as brushLoadingState } from 'britecharts/dist/umd/loading.min';
 
 const brush = {};
 

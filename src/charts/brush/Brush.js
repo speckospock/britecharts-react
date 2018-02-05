@@ -9,32 +9,23 @@ export default class Brush extends Component {
          * Internally used, do not overwrite.
          */
         data: PropTypes.arrayOf(PropTypes.any),
-
         /**
          * Exposes the constants to be used to force the x axis to respect a
          * certain granularity current options: MINUTE_HOUR, HOUR_DAY, DAY_MONTH, MONTH_YEAR
          */
         axisTimeCombinations: PropTypes.number,
-
         /**
          * Gets or Sets the dateRange for the selected part of the brush
          */
-        dateRange: PropTypes.arrayOf(PropTypes.string),
-        
+        dateRange: PropTypes.arrayOf(PropTypes.string),       
         /**
          * Gets or Sets the gradient of the chart
          */
         gradient: PropTypes.arrayOf(PropTypes.string),
-
         /**
          * Gets or Sets the height of the chart
          */
         height: PropTypes.number,
-        /**
-         * Gets or Sets the isAnimated property of the chart, making it to animate
-         * when render. By default this is 'false'
-         */
-        
         /**
          * Gets or Sets the loading state of the chart
          */
@@ -54,7 +45,6 @@ export default class Brush extends Component {
             left: PropTypes.number,
             right: PropTypes.number,
         }),
-
         /**
          * Gets or Sets whether a loading state will be shown
          */
@@ -100,7 +90,9 @@ export default class Brush extends Component {
 
     componentDidMount() {
         if (!this.props.shouldShowLoadingState) {
-            this._createChart();
+            if (this.props.data !== null) {
+                this._createChart();
+            }
         }
     }
 
